@@ -85,7 +85,7 @@ const valueJson = computed(() => {
 
 const handleShowPreview = () => {
     showPreview.value = !showPreview.value;
-    this.allowOverFlow();
+    allowOverFlow();
 }
 const allowOverFlow = () => {
     if (showPreview.value) {
@@ -120,18 +120,18 @@ const onAddOption = (field) => {
     }
 }
 
-const removeField = (index) => {
-    this.$delete(this.fields, index);
-}
-const removeFieldOption = (field, index) => {
-    this.$delete(field.options, index);
-}
+// const removeField = (index) => {
+//     this.$delete(fields.value, index);
+// }
+// const removeFieldOption = (field, index) => {
+//     this.$delete(field.options, index);
+// }
 const fieldTitle = (field) => {
     return field.type.charAt(0).toUpperCase() + field.type.slice(1)
 }
 const cloneTemplate = (template) => {
     let id = uniqueId();
-    console.log(id);
+    console.log(template);
     return {
         id: id,
         name: `${template.type}_${id}`,
@@ -143,8 +143,8 @@ const cloneTemplate = (template) => {
     };
 }
 const addFieldToBottom = (fieldTemplate) => {
-    let field = this.cloneTemplate(fieldTemplate);
-    this.fields.push(field);
+    let field = cloneTemplate(fieldTemplate);
+    fields.value.push(field);
 }
 
 onBeforeMount(() => {
@@ -200,7 +200,8 @@ onMounted(() => {
                                             <span class="-name">{{ element.label }}</span>
                                         </span>
                                     </h2>
-                                    <span @click="removeField(index)">
+                                    <!-- <span @click="removeField(index)"> -->
+                                    <span @click="delete fields[index]">
                                         <i class="icon fal fa-lg fa-times"></i>
                                     </span>
                                 </div>
@@ -213,7 +214,7 @@ onMounted(() => {
                                         <span>Placeholder</span>
                                         <input type="text" v-model="element.placeholder" />
                                     </div>
-                                    <div class="-prop -width" v-if="elementelement.class">
+                                    <div class="-prop -width" v-if="element.class">
                                         <span class="-label">Width</span>
                                         <select v-model="element.class">
                                             <option value="small-12">Full</option>
