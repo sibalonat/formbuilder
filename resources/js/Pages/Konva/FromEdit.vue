@@ -1,6 +1,8 @@
 <script setup>
+import VForm from "@/Components/VForm.vue";
 import { computed, onBeforeMount, onMounted, ref } from "@vue/runtime-core";
 import draggable from "vuedraggable";
+// VForm
 
 const prop = defineProps({
     form: Object,
@@ -9,7 +11,7 @@ const prop = defineProps({
 
 const fields = ref([])
 const title = ref('New Form')
-
+const showPreview = ref(false)
 
 const templates = ref([
     {
@@ -80,6 +82,18 @@ const valueJson = computed(() => {
 });
 
 // methods
+
+const handleShowPreview = () => {
+    showPreview.value = !showPreview.value;
+    this.allowOverFlow();
+}
+const allowOverFlow = () => {
+    if (showPreview.value) {
+        return document.body.classList.remove('hide-overflow');
+    }
+    document.body.classList.add('hide-overflow');
+}
+
 const getFieldTypeTitle = (field) => {
     switch (field.type) {
         case "textarea":
@@ -156,13 +170,17 @@ onMounted(() => {
         <div>
             <input type="text" v-model="title" />
         </div>
-        <div class="form-builder-container">
+        <div v-if="showPreview" class="form-builder-preview-container">
+            <div class="form-builder-preview">
+                <v-form action="#" method="get" :fields="fields"></v-form>
+            </div>
+        </div>
+        <div v-else class="form-builder-container">
             <div class="form-builder">
                 <div class="menu form-builder-templates">
-                    <draggable v-model="templates" :clone="cloneTemplate"
-                        item-key="name"
+                    <draggable v-model="templates" :clone="cloneTemplate" item-key="name"
                         :group="{ name: 'fields', pull: 'clone', put: false }">
-                        <template #item="{element}">
+                        <template #item="{ element }">
                             <li class="button" @click="addFieldToBottom(element)">
                                 {{ element.label }}
                             </li>
@@ -170,11 +188,10 @@ onMounted(() => {
                     </draggable>
                 </div>
                 <div class="form-builder-fields">
-                    <draggable v-model="fields" ghost-class="fields" item-key="id" :group="{ name: 'fields', pull: false, put: true }"
-                        handle=".handle">
-                        <template #item="{element, index}">
-                            <div class="p-r-2 relative -field"
-                                :class="['-type-' + element.type]">
+                    <draggable v-model="fields" ghost-class="fields" item-key="id"
+                        :group="{ name: 'fields', pull: false, put: true }" handle=".handle">
+                        <template #item="{ element, index }">
+                            <div class="p-r-2 relative -field" :class="['-type-' + element.type]">
                                 <div class="-field-title handle">
                                     <h2 @click="element.isShowing = !element.isShowing">
                                         <span class="fal fa-list"></span>
